@@ -8,7 +8,6 @@ void drawPoint(int x, int y)
    analogWrite(Y_Pin, y);
 }
 
-
 void drawLine(byte x1, byte y1, byte x2, byte y2)
 {
     // optimized implementation of Bresenham's Algorithm
@@ -131,16 +130,16 @@ void drawLine(byte x1, byte y1, byte x2, byte y2)
     }
 }
 
-void drawPattern(prog_uchar *image, int imagesize, int TimeMs) 
+void drawPattern(prog_uchar *image, int imagesize, uint16_t TimeMs) 
 {
-   elapsedMillis NumMillis;
-   while (NumMillis < TimeMs) drawPatternOnce(image, imagesize);
+   uint32_t StartMillis = millis();
+   while (millis() - StartMillis < TimeMs) drawPatternOnce(image, imagesize);
 }
 
 void drawPatternOnce(prog_uchar *image, int imagesize) 
 {
     bool darkvector = false;
-    int i = 0;
+    uint16_t i = 0;
     byte x1 = pgm_read_byte_near(image+i++);
     byte y1 = pgm_read_byte_near(image+i++);
     while (i < imagesize) 
