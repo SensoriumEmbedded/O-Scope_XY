@@ -1,9 +1,21 @@
 
-// the following are X, Y, X, Y except that a single "255"
-// indicatete the following is a "dark" vector (move instead
-// of draw)
+// the following are X1, Y1, X2, Y2 except that a single "255"
+// indicatete the following is a "dark" vector (move instead of draw)
 // the first vector is assumed "dark". Code will not accept a "255"
 // at the beginning
+
+
+PROGMEM  prog_uchar test_pat[] = {
+0,0,
+254,0,
+254,254,
+0,254,
+0,0,
+254,254,
+255,
+0,254,
+254,0, 
+};
 
 PROGMEM  prog_uchar trav[] = {
 75 , 43 ,
@@ -400,6 +412,7 @@ PROGMEM  prog_uchar starburst[] = {
 255, 120, 120, 218, 101
 
 };
+
 
 // the logo with the wizard substituted
 PROGMEM  prog_uchar wizardidd[] = {
