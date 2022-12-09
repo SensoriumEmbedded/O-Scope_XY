@@ -5,7 +5,6 @@
 // at the beginning
 
 PROGMEM  prog_uchar tek_letters[] = {
-// Tek Block letter XY display: 31 Mar 2013 by Alan Wolke
 20,164 ,
 100,164,
 100,144,
