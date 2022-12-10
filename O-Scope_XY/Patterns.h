@@ -46,7 +46,7 @@ PROGMEM  prog_uchar tek_letters[] = {
 100,114,
 };
 
-PROGMEM  prog_uchar test_pat[] = {
+PROGMEM  prog_uchar BoxX_pat[] = {
 0,0,
 254,0,
 254,254,

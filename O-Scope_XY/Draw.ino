@@ -4,8 +4,13 @@
 
 void drawPoint(int x, int y)
 {
+#ifdef usingESP32
+   DAC1Write(x);
+   DAC2Write(y);
+#else
    analogWrite(X_Pin, x);
    analogWrite(Y_Pin, y);
+#endif
 }
 
 void drawLine(byte x1, byte y1, byte x2, byte y2)
