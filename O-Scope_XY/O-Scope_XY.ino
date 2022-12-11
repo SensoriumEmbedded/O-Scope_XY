@@ -1,21 +1,21 @@
 
 //Todo:
-//  Modes: Clock, Demo mode or Step through each
+//  Modes/Menu: Clock, Demo mode or Step through each
 //  show mode name, routine name, etc
 //    all routines return on button or timeout?
 // bmp import
+// SixteenSegmentASCII: change to uint32_t, allow for 16 more "segments" to fix colon, etc
+//    add deffinitions for 0-31 for all on, orig 16, arrow, etc.
 
 // spiral/vertigo illusion
 // incorporate some of this? \O-Scope_XY\other-ref\OsciDisplay-master\OsciVector
 //  Speech option?  (DACs being used)
 
 //HW: 
-// Up, Down, and select/cancel.
-//  * Button for clock set?
-//  * Select mode button or octal select
+// 
 
 //Reference:
-//    drawRampDACs execution time benchmark (256 points X and Y)
+//    animRampDACs execution time benchmark (256 points X and Y)
 //       Dual DAC output from Teensy version 3.5 & 3.6 only. 
 //       Teensy 3.5 120MHz, Faster (default):           2283 Hz = 584k dots/sec   9741dots at 60fps (14% of all points)
 //       Teensy 3.5 120MHz, Fastest:                    2674 Hz
@@ -39,6 +39,7 @@
 #define usingESP32  //Comment out for Teensy 3.5/3.6
 
 #include <TimeLib.h>
+#include <Bounce2.h>
 #include "Patterns.h"
 #include "16-Segment-ASCII_BIN-NDP.h"
 
@@ -58,15 +59,32 @@
  #define Y_Pin       A22
 #endif
 
-#define Button1_Pin  33
-#define Button2_Pin  32
+#define btnUp_Pin   0
+#define btnDn_Pin   4
+#define btnSel_Pin 15
+#define LED_Pin     2
 
 #define pi 3.14159
+
+Bounce2::Button UpButton   = Bounce2::Button();
+Bounce2::Button DownButton = Bounce2::Button();
+Bounce2::Button SelButton  = Bounce2::Button();
 
 void setup() 
 {
   Serial.begin(115200);
   //while (!Serial);
+
+  UpButton.attach(btnUp_Pin, INPUT_PULLUP); // USE INTERNAL PULL-UP
+  UpButton.interval(5); 
+  UpButton.setPressedState(LOW); 
+  DownButton.attach(btnDn_Pin, INPUT_PULLUP); // USE INTERNAL PULL-UP
+  DownButton.interval(5); 
+  DownButton.setPressedState(LOW); 
+  SelButton.attach(btnSel_Pin, INPUT_PULLUP); // USE INTERNAL PULL-UP
+  SelButton.interval(5); 
+  SelButton.setPressedState(LOW); 
+  pinMode (LED_Pin, OUTPUT);
 
 #ifdef usingESP32
   dac_output_enable(DAC_CHANNEL_1);
@@ -79,36 +97,34 @@ void setup()
   setTime(4,20,0,20,4,23);
 #endif
 
-  pinMode (Button1_Pin, INPUT_PULLUP);
-  pinMode (Button2_Pin, INPUT_PULLUP);
-  
   Serial.println("Welcome to O-Scope XY !");
 }
 
 void loop() 
 {
+   animAnalogClock(-1);
+   
    //test patterns:
-   //drawRampDACs(); //returns on button push
-   //drawFillAll(); //returns on button push
-   //drawDotField(1000);
-   //drawPattern(BoxX_pat, sizeof(BoxX_pat), 1000);
-   //drawCharScales(2000);
+   //animRampDACs(); //returns on button push
+   //animFillAll(); //returns on button push
+   //animShowDotField(1000);
+   //animShowPattern(BoxX_pat, sizeof(BoxX_pat), 1000);
+   //animCharScales(2000);
    
 
-   drawAnalogClock(100000);
  
-   //drawPattern(H_Leaf, sizeof(H_Leaf), 500);
-   //animSpinPattern(H_Leaf, sizeof(H_Leaf), 4);
-   //drawPattern(H_Leaf, sizeof(H_Leaf), 500);
-   //drawPattern(starburst, sizeof(starburst), 2000);  
+   animShowPattern(H_Leaf, sizeof(H_Leaf), 500);
+   animSpinPattern(H_Leaf, sizeof(H_Leaf), 4);
+   animShowPattern(H_Leaf, sizeof(H_Leaf), 500);
+   //animShowPattern(starburst, sizeof(starburst), 2000);  
    //animGeoPatOTF();
    ////animGeoPatFramed();
-   //drawPattern(trav, sizeof(trav), 1000);
+   //animShowPattern(trav, sizeof(trav), 1000);
    //animSpinPattern(trav, sizeof(trav), 5);
-   //drawPattern(tree, sizeof(tree), 2500);
+   //animShowPattern(tree, sizeof(tree), 2500);
    //
-   //drawPattern(logo, sizeof(logo), 2500);
-   //drawPattern(wizardidd, sizeof(wizardidd), 2500);
+   //animShowPattern(logo, sizeof(logo), 2500);
+   //animShowPattern(wizardidd, sizeof(wizardidd), 2500);
    //animSpinPattern(tek_letters, sizeof(tek_letters), 5);
    ////delay(750);
    
@@ -153,7 +169,7 @@ bool WifiConnect()
 
   Serial.println("Setting synch provider");
   setSyncProvider(getNtpTime);
-  setSyncInterval(3);  //seconds (300 in example)
+  setSyncInterval(300);  //seconds (300 in example)
 
   Serial.println("Connected to WiFi");
   return true;

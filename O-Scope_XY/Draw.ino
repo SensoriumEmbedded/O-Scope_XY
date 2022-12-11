@@ -177,7 +177,7 @@ void drawCircle(uint8_t X, uint8_t Y, uint8_t Radius, float StepRad)
       drawPoint(X+sin(angle)*Radius, Y+cos(angle)*Radius);
 }
 
-void drawPatternOnce(prog_uchar *image, int imagesize) 
+void drawPattern(prog_uchar *image, int imagesize) 
 {
    bool darkvector = false;
    uint16_t i = 0;
@@ -244,112 +244,46 @@ void drawString(char * Msg, int16_t X, int16_t Y, uint8_t Scale)
    while(*Msg) drawCharacter(*Msg++, &X, &Y, Scale);
 }
 
-void drawDigitalClock()
+void drawDigitalClock(int16_t X, int16_t Y, uint8_t Scale)
 {
    char Buf[15];
-   int16_t X = 64;
-   int16_t Y = 64;
    
    //sprintf(Buf, "%d:%02d:%02d %s", hourFormat12(), minute(), second(), isPM() ? "pm":"am");
    sprintf(Buf, "%d:%02d:%02d", hourFormat12(), minute(), second());
-   drawString(Buf, 64, 64, 2);
+   drawString(Buf, X, Y, Scale);
 }
 
-/********************************  persisting patterns/shapes  ********************************/
-
-void drawPattern(prog_uchar *image, int imagesize, uint32_t TimeMs) 
+void drawDate(int16_t X, int16_t Y, uint8_t Scale)
 {
-   uint32_t StartMillis = millis();
-   while (millis() - StartMillis < TimeMs) drawPatternOnce(image, imagesize);
-}
-
-void drawDotField(uint32_t TimeMs) 
-{
-   float increment = 15.999;
-   uint32_t StartMillis = millis();
+   char Buf[15];
    
-   while (millis() - StartMillis < TimeMs)
-   {
-      for (float x = 0; x < 256; x+=increment) 
-      {
-         for (float y = 0; y < 256; y+=increment) 
-         {
-            drawPoint(x, y);
-         }
-      }
-   }
+   sprintf(Buf, "%02d/%02d/%02d", month(), day(), year());
+   drawString(Buf, X, Y, Scale);
 }
 
-void drawAnalogClock(uint32_t TimeMs)
+void drawAnalogClock()
 {
-   uint32_t StartMillis = millis();
    float angle;
    
-   while (millis() - StartMillis < TimeMs)
-   {
-      //outer circle, dot per minute:
-      drawCircle(128, 128, 127, pi/30); 
-      
-      //tick marks on hour:
-      for (angle = 0; angle < 2*pi; angle+=pi/6) 
-         drawLineOffset(sin(angle)*127, cos(angle)*127, sin(angle)*100, cos(angle)*100);
-      
-      //second hand, digital movement
-      angle = second()*pi/30; 
-      drawLineOffset(sin(angle+pi)*25, cos(angle+pi)*25, sin(angle)*100, cos(angle)*100);
-      
-      //minute hand, analog movement
-      angle = angle/60 + minute()*pi/30;
-      drawTriangleOffset(sin(angle)*110, cos(angle)*110,  sin(angle+pi*0.9)*20, cos(angle+pi*0.9)*20,  sin(angle-pi*0.9)*20, cos(angle-pi*0.9)*20);
-     
-      //hour hand, analog movement
-      angle = angle/12 + hourFormat12()*pi/6;
-      drawTriangleOffset(sin(angle)*60, cos(angle)*60,    sin(angle+pi*0.9)*25, cos(angle+pi*0.9)*25,  sin(angle-pi*0.9)*25, cos(angle-pi*0.9)*25);
-
-      //center point
-      drawPoint(128, 128); 
-      
-      drawDigitalClock();
-
-      if(!digitalRead(Button1_Pin)) adjustTime(1);
-      if(!digitalRead(Button2_Pin)) adjustTime(60);
-   } 
+   //outer circle, dot per minute:
+   drawCircle(128, 128, 127, pi/30); 
    
-}
+   //tick marks on hour:
+   for (angle = 0; angle < 2*pi; angle+=pi/6) 
+      drawLineOffset(sin(angle)*127, cos(angle)*127, sin(angle)*100, cos(angle)*100);
+   
+   //second hand, digital movement
+   angle = second()*pi/30; 
+   drawLineOffset(sin(angle+pi)*25, cos(angle+pi)*25, sin(angle)*100, cos(angle)*100);
+   
+   //minute hand, analog movement
+   angle = angle/60 + minute()*pi/30;
+   drawTriangleOffset(sin(angle)*110, cos(angle)*110,  sin(angle+pi*0.9)*20, cos(angle+pi*0.9)*20,  sin(angle-pi*0.9)*20, cos(angle-pi*0.9)*20);
+  
+   //hour hand, analog movement
+   angle = angle/12 + hourFormat12()*pi/6;
+   drawTriangleOffset(sin(angle)*60, cos(angle)*60,    sin(angle+pi*0.9)*25, cos(angle+pi*0.9)*25,  sin(angle-pi*0.9)*25, cos(angle-pi*0.9)*25);
 
-void drawRampDACs()
-{
-   while(digitalRead(Button1_Pin))
-   {
-      for (uint16_t i=0; i<256; i++)
-      {
-         drawPoint(i, 255-i);
-      }
-   }
-}
-
-void drawFillAll()
-{
-   while(digitalRead(Button2_Pin))
-   {
-      for (uint16_t x=0; x<256; x++)
-      {
-         for (uint16_t y=0; y<256; y++)
-         {
-            drawPoint(x, y);
-         }
-      }
-   }
-}
-
-void drawCharScales(uint32_t TimeMs)
-{
-   for(uint8_t Scale = 1; Scale<=10; Scale++)
-   {
-      uint32_t StartMillis = millis();
-      while (millis() - StartMillis < TimeMs)
-      {
-         drawAllChars(Scale);
-      }
-   }
+   //center point
+   drawPoint(128, 128); 
 }

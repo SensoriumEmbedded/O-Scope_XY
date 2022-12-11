@@ -15,7 +15,7 @@ void animGeoPatFramed()
          angle += angleInc;
          //drawLine(x1, y1, x2, y2)
       }
-      drawPattern(Pattern, sizeof(Pattern), 100);
+      animShowPattern(Pattern, sizeof(Pattern), 100);
       angleInc += 3.14159/32;
    }
 }
@@ -73,3 +73,93 @@ void animSpinPattern(prog_uchar *image, int imagesize, uint8_t NumSpins)
    }
 }
 
+void animShowPattern(prog_uchar *image, int imagesize, uint32_t TimeMs) 
+{
+   uint32_t StartMillis = millis();
+   while (millis() - StartMillis < TimeMs) 
+   {
+      drawPattern(image, imagesize);
+      
+      SelButton.update();
+      if(SelButton.pressed()) return;
+      //UpButton.update();
+      //if(UpButton.isPressed()) adjustTime(1);
+      //DownButton.update();
+      //if(DownButton.isPressed()) adjustTime(60);
+   }
+}
+
+void animShowDotField(uint32_t TimeMs) 
+{
+   float increment = 15.999;
+   uint32_t StartMillis = millis();
+   
+   while (millis() - StartMillis < TimeMs)
+   {
+      for (float x = 0; x < 256; x+=increment) 
+      {
+         for (float y = 0; y < 256; y+=increment) 
+         {
+            drawPoint(x, y);
+         }
+      }
+   }
+}
+
+void animAnalogClock(uint32_t TimeMs)
+{
+   uint32_t StartMillis = millis();
+   
+   while (millis() - StartMillis < TimeMs)
+   {
+      drawAnalogClock();
+      
+      drawDigitalClock(64, 74, 2);
+      drawDate(88, 64, 1);
+      
+      SelButton.update();
+      if(SelButton.pressed()) return;
+      UpButton.update();
+      if(UpButton.pressed()) adjustTime(1);
+      DownButton.update();
+      if(DownButton.pressed()) adjustTime(60);
+   } 
+   
+}
+
+void animRampDACs()
+{
+   while(digitalRead(btnUp_Pin))
+   {
+      for (uint16_t i=0; i<256; i++)
+      {
+         drawPoint(i, 255-i);
+      }
+   }
+}
+
+void animFillAll()
+{
+   while(digitalRead(btnDn_Pin))
+   {
+      for (uint16_t x=0; x<256; x++)
+      {
+         for (uint16_t y=0; y<256; y++)
+         {
+            drawPoint(x, y);
+         }
+      }
+   }
+}
+
+void animCharScales(uint32_t TimeMs)
+{
+   for(uint8_t Scale = 1; Scale<=10; Scale++)
+   {
+      uint32_t StartMillis = millis();
+      while (millis() - StartMillis < TimeMs)
+      {
+         drawAllChars(Scale);
+      }
+   }
+}
