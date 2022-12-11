@@ -1,8 +1,7 @@
 
 //Todo:
-//  display letters/string;  "Digital" (7 seg?) Clock option?
-
 //  Modes: Clock, Demo mode or Step through each
+//  show mode name, routine name, etc
 //    all routines return on button or timeout?
 // bmp import
 
@@ -11,9 +10,11 @@
 //  Speech option?  (DACs being used)
 
 //HW: 
+// Up, Down, and select/cancel.
 //  * Button for clock set?
 //  * Select mode button or octal select
 
+//Reference:
 //    drawRampDACs execution time benchmark (256 points X and Y)
 //       Dual DAC output from Teensy version 3.5 & 3.6 only. 
 //       Teensy 3.5 120MHz, Faster (default):           2283 Hz = 584k dots/sec   9741dots at 60fps (14% of all points)
@@ -27,18 +28,19 @@
 //       Teensy 3.6 180MHz, Fastest with LTO:           6061 Hz     
 //       Teensy 3.6 256MHz (ovrclk), Fastest with LTO:  7813 Hz (3.4x faster than 3.5 default)
 //       ESP32 Dev Mod using dacWrite function           103 Hz Crazy slow!
-//      *ESP32 Dev Mod using FastDAC method:            4032 Hz (1.7x faster than 3.5 default!)  
+//      *ESP32 Dev Mod using FastDAC method:            4032 Hz (1.7x faster than 3.5 default, same as 3.6 default)  
 //       ESP32-S2 (small) tested w/dacWrite but not measured, too slow; won't run FastDAC code 
 
-//Reference:
 //  ESP32 FastDAC via bitluni https://github.com/bitluni/OsciDisplay
 //  Tek Block letter XY coords and spin effect idea: Alan Wolke 2013
 //  Tek Logos and line draw code: https://www.qsl.net/w2aew/code/logor2r.ino
+//  16 seg display decoder by Dave Madison: https://github.com/dmadison/LED-Segment-ASCII
 
 #define usingESP32  //Comment out for Teensy 3.5/3.6
 
 #include <TimeLib.h>
 #include "Patterns.h"
+#include "16-Segment-ASCII_BIN-NDP.h"
 
 #ifdef usingESP32
  #include "FastDAC.h"
@@ -90,20 +92,25 @@ void loop()
    //drawFillAll(); //returns on button push
    //drawDotField(1000);
    //drawPattern(BoxX_pat, sizeof(BoxX_pat), 1000);
+   //drawCharScales(2000);
    
+
    drawAnalogClock(100000);
  
-   drawPattern(starburst, sizeof(starburst), 2000);  
-   animGeoPatOTF();
-   //animGeoPatFramed();
-   drawPattern(trav, sizeof(trav), 1000);
-   animSpinPattern(trav, sizeof(trav), 5);
-   drawPattern(xmastree, sizeof(xmastree), 2500);
-   
-   drawPattern(logo, sizeof(logo), 2500);
-   drawPattern(wizardidd, sizeof(wizardidd), 2500);
-   animSpinPattern(tek_letters, sizeof(tek_letters), 5);
-   //delay(750);
+   //drawPattern(H_Leaf, sizeof(H_Leaf), 500);
+   //animSpinPattern(H_Leaf, sizeof(H_Leaf), 4);
+   //drawPattern(H_Leaf, sizeof(H_Leaf), 500);
+   //drawPattern(starburst, sizeof(starburst), 2000);  
+   //animGeoPatOTF();
+   ////animGeoPatFramed();
+   //drawPattern(trav, sizeof(trav), 1000);
+   //animSpinPattern(trav, sizeof(trav), 5);
+   //drawPattern(tree, sizeof(tree), 2500);
+   //
+   //drawPattern(logo, sizeof(logo), 2500);
+   //drawPattern(wizardidd, sizeof(wizardidd), 2500);
+   //animSpinPattern(tek_letters, sizeof(tek_letters), 5);
+   ////delay(750);
    
 }
    
@@ -146,7 +153,7 @@ bool WifiConnect()
 
   Serial.println("Setting synch provider");
   setSyncProvider(getNtpTime);
-  setSyncInterval(300);  //seconds (300 in example)
+  setSyncInterval(3);  //seconds (300 in example)
 
   Serial.println("Connected to WiFi");
   return true;
