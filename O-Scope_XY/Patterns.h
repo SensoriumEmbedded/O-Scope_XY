@@ -186,7 +186,7 @@ PROGMEM  prog_uchar tree[] = {
 };
 
 // the regular logo
-PROGMEM  prog_uchar logo[] = {
+PROGMEM  prog_uchar tek_logo[] = {
 
 41, 85, 40, 92, 41, 101, 43, 110,
  46, 118, 49, 126, 54, 134, 60, 141,

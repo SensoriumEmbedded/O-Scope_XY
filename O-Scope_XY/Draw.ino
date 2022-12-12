@@ -1,5 +1,5 @@
 
-
+//These routines (draw*) draw something once and return.  Itterations made by anim* routines
 
 const uint8_t SixteenSegToXYPlot[32] = {
 // converts 16 segment display segments to vector lines
@@ -199,7 +199,7 @@ void drawPattern(prog_uchar *image, int imagesize)
    }
 }
 
-void drawCharacter(uint8_t Character, int16_t *X, int16_t *Y, uint8_t Scale)
+void drawCharacter(uint8_t Character, int16_t *X, int16_t *Y, float Scale)
 {
    //chars are 6x8 (before scaling)
    Character -= 32; //array starts at space (32)
@@ -231,7 +231,7 @@ void drawCharacter(uint8_t Character, int16_t *X, int16_t *Y, uint8_t Scale)
    *X += 8 * Scale; //char width +2 spacing
 }
 
-void drawAllChars(uint8_t Scale)
+void drawAllChars(float Scale)
 {
    int16_t X = 0;
    int16_t Y = 255 - 10 * Scale;
@@ -239,12 +239,12 @@ void drawAllChars(uint8_t Scale)
    for(uint16_t cNum=32; cNum< 48; cNum++) drawCharacter(cNum, &X, &Y, Scale);
 }
 
-void drawString(char * Msg, int16_t X, int16_t Y, uint8_t Scale)
+void drawString(const char * Msg, int16_t X, int16_t Y, float Scale)
 {
    while(*Msg) drawCharacter(*Msg++, &X, &Y, Scale);
 }
 
-void drawDigitalClock(int16_t X, int16_t Y, uint8_t Scale)
+void drawDigitalClock(int16_t X, int16_t Y, float Scale)
 {
    char Buf[15];
    
@@ -253,7 +253,7 @@ void drawDigitalClock(int16_t X, int16_t Y, uint8_t Scale)
    drawString(Buf, X, Y, Scale);
 }
 
-void drawDate(int16_t X, int16_t Y, uint8_t Scale)
+void drawDate(int16_t X, int16_t Y, float Scale)
 {
    char Buf[15];
    

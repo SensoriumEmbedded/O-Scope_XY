@@ -1,18 +1,13 @@
 
 //Todo:
-//  Modes/Menu: Clock, Demo mode or Step through each
-//  show mode name, routine name, etc
-//    all routines return on button or timeout?
+// more morphing shapes, Spiral routine imports?
+//    spiral/vertigo illusion
 // bmp import
+// change Scale arguments to Height for ease of use, convert to scale in draw char/string routines.
 // SixteenSegmentASCII: change to uint32_t, allow for 16 more "segments" to fix colon, etc
-//    add deffinitions for 0-31 for all on, orig 16, arrow, etc.
-
-// spiral/vertigo illusion
+//    add deffinitions for 0-31 to include arrow, all on, etc.
 // incorporate some of this? \O-Scope_XY\other-ref\OsciDisplay-master\OsciVector
-//  Speech option?  (DACs being used)
-
-//HW: 
-// 
+//  Speech option?  (DACs being used) 
 
 //Reference:
 //    animRampDACs execution time benchmark (256 points X and Y)
@@ -90,7 +85,7 @@ void setup()
   dac_output_enable(DAC_CHANNEL_1);
   dac_output_enable(DAC_CHANNEL_2);
   DACPrepare(false);
-  WifiConnect();
+  if (WifiConnect()) digitalWrite(LED_Pin, true); //connected
 #else
   pinMode (X_Pin, OUTPUT);
   pinMode (Y_Pin, OUTPUT);
@@ -98,36 +93,13 @@ void setup()
 #endif
 
   Serial.println("Welcome to O-Scope XY !");
+  animShowString("Trav's    O-Scope XY proj 2022", 0, 200, 3, 2500);
 }
 
 void loop() 
 {
-   animAnalogClock(-1);
-   
-   //test patterns:
-   //animRampDACs(); //returns on button push
-   //animFillAll(); //returns on button push
-   //animShowDotField(1000);
-   //animShowPattern(BoxX_pat, sizeof(BoxX_pat), 1000);
-   //animCharScales(2000);
-   
-
- 
-   animShowPattern(H_Leaf, sizeof(H_Leaf), 500);
-   animSpinPattern(H_Leaf, sizeof(H_Leaf), 4);
-   animShowPattern(H_Leaf, sizeof(H_Leaf), 500);
-   //animShowPattern(starburst, sizeof(starburst), 2000);  
-   //animGeoPatOTF();
-   ////animGeoPatFramed();
-   //animShowPattern(trav, sizeof(trav), 1000);
-   //animSpinPattern(trav, sizeof(trav), 5);
-   //animShowPattern(tree, sizeof(tree), 2500);
-   //
-   //animShowPattern(logo, sizeof(logo), 2500);
-   //animShowPattern(wizardidd, sizeof(wizardidd), 2500);
-   //animSpinPattern(tek_letters, sizeof(tek_letters), 5);
-   ////delay(750);
-   
+   animDemoLoop();
+   animMenu(); //main menu, does not return  
 }
    
 bool WifiConnect()
