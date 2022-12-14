@@ -167,24 +167,24 @@ void animCharScales()
 
 void animMenu()
 {
-   char Buf[][13]={"Demo  Loop", "Analog Clock", "By Others", "Test Patts"};
+   const char Buf[][13]={"Demo  Loop", "Analog Clock", "By Others", "Test Patts", "Spiral Ang", "Spiral Inf", "Spiral Itt"};
    uint8_t numEntries = sizeof(Buf)/13;
    uint8_t selection = 0;
 
    while(1)
    {      
-      drawString("Select from:", 0, 225, 2.8);
+      drawString("Select from:", 0, 225, 2.4);
       for(uint8_t entNum = 0; entNum<numEntries; entNum++)
       {
-         drawString(Buf[entNum], 20, 180-entNum * 30, 2.5);
+         drawString(Buf[entNum], 20, 200-entNum * 25, 2.0);
       }
-      drawString("*", 0, 182-selection * 30, 2.0);
+      drawString("*", 0, 202-selection * 25, 1.8);
       
       SelButton.update();
       if(SelButton.pressed()) 
       {
          switch (selection)  
-         {//"Demo Loop", "Analog Clock", "By Others", "Test Patts"
+         {//"Demo Loop", "Analog Clock", "By Others", "Test Patts", "Spiral Ang", "Spiral Inf", "Spiral Itt"
          case 0: 
             animDemoLoop();
             break;
@@ -203,6 +203,15 @@ void animMenu()
             animShowPattern(BoxX_pat, sizeof(BoxX_pat), -1, "");
             animFillAll();
             animShowPattern(starburst,   sizeof(starburst), -1, "");
+            break;
+         case 4:
+            animSpiralAngles();  //reset angle and Mult 4.0-15 step 0.5  ~15sec
+            break;
+         case 5:
+            animAllInfSpirals(); //60 sec/spiral, increasing angle and step mult from 4.0
+            break;       
+         case 6:
+            animIttSitSpiral(); //.sit file itterations
             break;
          //default:
          }
@@ -247,9 +256,14 @@ void animDemoLoop()
       
       if(animAnalogClock(8000)                                     ) return;
       
+      if(animSpiralAngles()) return;  //reset angle and Mult 4.0-15 step 0.5  ~15sec
+      
       if(animShowPattern(trav, sizeof(trav), 1000, "Trav's Trav")  ) return;
       if(animSpinPattern(trav, sizeof(trav), 3)                    ) return;
       if(animShowPattern(trav, sizeof(trav), 1000, "")  ) return;
+      
+      if(animIttSitSpiral()) return;   //.sit file itterations
+      //animAllInfSpirals(); //60 sec/spiral, increasing angle and step mult from 4.0
    }
 }
 
